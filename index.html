@@ -6,109 +6,194 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deniz Gitar Superstar</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #ff0055;
+            --secondary: #ffac00;
+        }
         body {
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: #050505;
             color: white;
             overflow-x: hidden;
             touch-action: manipulation;
+            font-family: 'Orbitron', sans-serif;
         }
         .rock-font { font-family: 'Permanent Marker', cursive; }
         .title-font {
             font-family: 'Bangers', system-ui;
-            text-shadow: 4px 4px 0px #ff0055;
+            text-shadow: 0 0 20px var(--primary);
         }
+        
+        /* Arka plan animasyonları */
+        .bg-animate {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+        }
+
+        .emoji-float {
+            position: absolute;
+            pointer-events: none;
+            animation: float-up 10s linear infinite;
+            opacity: 0.2;
+            font-size: 2rem;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-10vh) rotate(360deg); }
+        }
+
+        /* Sahne Işıkları */
+        .spotlight {
+            position: fixed;
+            width: 40vw; height: 100vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: -1;
+            filter: blur(30px);
+            animation: swing 5s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+        @keyframes swing {
+            from { transform: rotate(-20deg); }
+            to { transform: rotate(20deg); }
+        }
+
+        /* Butonlar */
+        .btn-metal {
+            background: linear-gradient(45deg, #111, #333);
+            border: 2px solid #555;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-metal:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+        }
+        .btn-metal:active { transform: scale(0.95); }
+
         .video-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.98);
             z-index: 100;
             justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
         }
-        .btn-rock {
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 0 #880e4f;
-        }
-        .btn-rock:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #880e4f;
-        }
-        .glow-effect {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 0, 85, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+
+        /* Neon Yazı */
+        .neon-text {
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--primary), 0 0 30px var(--primary);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4" onclick="handleScreenClick(event)">
+<body onclick="handleScreenClick(event)">
 
-    <!-- Metallica Muzigi -->
-    <audio id="bgMusic" loop>
-        <source src="metallica.mp3" type="audio/mpeg">
-    </audio>
+    <div class="bg-animate" id="bgAnimate"></div>
+    <div class="spotlight" style="left: 10%;"></div>
+    <div class="spotlight" style="right: 10%; animation-delay: -2.5s;"></div>
 
-    <header class="text-center mt-6 select-none">
-        <h1 class="text-5xl md:text-8xl title-font mb-4 tracking-wider">DENİZ GİTAR STARI</h1>
-        <p class="text-xl md:text-3xl rock-font text-yellow-400">Karizma Şimdi Daha Da Arttı!</p>
-    </header>
-
-    <main class="flex-grow flex flex-col items-center justify-center gap-8 w-full max-w-md">
+    <div class="min-h-screen flex flex-col items-center justify-between p-6 relative">
         
-        <!-- Metallica Kontrolu -->
-        <button onclick="toggleMetallica(event)" class="btn-rock w-full bg-red-700 hover:bg-red-600 p-6 rounded-xl border-2 border-white flex items-center justify-center gap-4 group">
-            <span class="text-4xl group-hover:scale-125 transition-transform">🤘</span>
-            <span class="text-2xl font-bold uppercase tracking-tighter title-font" id="metaBtnText">METALLICA BAŞLAT</span>
-        </button>
+        <audio id="bgMusic" loop>
+            <source src="metallica.mp3" type="audio/mpeg">
+        </audio>
 
-        <!-- Deniz Butonu -->
-        <button onclick="playRandomVideo(event)" class="btn-rock w-full bg-pink-600 hover:bg-pink-500 p-6 rounded-xl border-2 border-white flex items-center justify-center gap-4 glow-effect group">
-            <span class="text-4xl group-hover:rotate-12 transition-transform">🎸</span>
-            <span class="text-2xl font-bold uppercase tracking-tighter title-font">DENİZ'İ İZLE (YENİ!)</span>
-        </button>
+        <header class="text-center mt-8 select-none z-10">
+            <h1 class="text-6xl md:text-9xl title-font mb-2 neon-text">DENİZ</h1>
+            <p class="text-2xl md:text-4xl rock-font text-yellow-400 -rotate-2">WORLD TOUR 2024</p>
+        </header>
 
-        <div class="bg-black/40 backdrop-blur-sm p-4 rounded-lg border border-white/10 text-center select-none">
-            <p class="text-sm opacity-70 italic">Ekranın herhangi bir yerine dokunarak şovun tadını çıkar!</p>
-        </div>
+        <main class="flex flex-col items-center gap-12 w-full max-w-md z-10">
+            <!-- Ana Buton Konteyneri -->
+            <div class="w-full flex flex-col gap-6">
+                <button onclick="toggleMetallica(event)" class="btn-metal w-full p-8 rounded-2xl flex items-center justify-center gap-4 group">
+                    <div class="text-4xl">🤘</div>
+                    <div class="text-left">
+                        <div class="text-xs text-gray-400 font-sans">BACKSTAGE MUSIC</div>
+                        <div class="text-xl title-font tracking-widest" id="metaBtnText">METALLICA OFF</div>
+                    </div>
+                </button>
 
-    </main>
+                <button onclick="playRandomVideo(event)" class="btn-metal w-full p-8 rounded-2xl flex items-center justify-center gap-4 group border-pink-500/50">
+                    <div class="text-4xl animate-bounce">🎸</div>
+                    <div class="text-left">
+                        <div class="text-xs text-pink-500 font-sans">LIVE PERFORMANCE</div>
+                        <div class="text-xl title-font tracking-widest">SOLO PATLAT!</div>
+                    </div>
+                </button>
+            </div>
+
+            <div class="text-center group cursor-pointer">
+                <div class="text-sm opacity-50 font-sans tracking-[0.2em] group-hover:opacity-100 transition-opacity">
+                    TAP ANYWHERE FOR SURPRISE
+                </div>
+            </div>
+        </main>
+
+        <footer class="w-full text-center py-8 z-10">
+            <div class="rock-font text-xl md:text-2xl text-white/80 border-t border-white/10 pt-4">
+                yapimci canim oglusum deniz
+            </div>
+        </footer>
+    </div>
 
     <!-- Video Modal -->
     <div id="videoOverlay" class="video-overlay" onclick="closeVideo(event)">
-        <div class="relative w-full max-w-2xl px-4" onclick="event.stopPropagation()">
-            <button class="absolute -top-12 right-4 text-white text-5xl hover:text-pink-500 transition-colors" onclick="closeVideo(event)">&times;</button>
-            <video id="denizVideo" class="w-full rounded-2xl shadow-2xl border-4 border-pink-500 bg-black" controls>
-                Tarayiciniz video desteklemiyor.
-            </video>
+        <div class="relative w-full max-w-4xl px-4" onclick="event.stopPropagation()">
+            <div class="absolute -top-16 left-0 right-0 flex justify-between items-center px-4">
+                <span class="rock-font text-2xl text-pink-500">DENİZ ON STAGE</span>
+                <button class="text-white text-6xl leading-none hover:text-pink-500" onclick="closeVideo(event)">&times;</button>
+            </div>
+            <div class="rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,0,85,0.5)] border-4 border-white/20">
+                <video id="denizVideo" class="w-full bg-black aspect-video" controls>
+                    Tarayiciniz video desteklemiyor.
+                </video>
+            </div>
         </div>
     </div>
-
-    <footer class="w-full text-center py-4 border-t border-white/10">
-        <p class="rock-font text-lg opacity-90">yapimci canim oglusum deniz</p>
-    </footer>
 
     <script>
         const videoPlayer = document.getElementById('denizVideo');
         const overlay = document.getElementById('videoOverlay');
         const bgMusic = document.getElementById('bgMusic');
         const metaBtnText = document.getElementById('metaBtnText');
+        const bgAnimate = document.getElementById('bgAnimate');
         
-        // Guncellenmis video listesi
         const videos = ['deniz1.mp4', 'deniz2.mp4', 'deniz3.mp4', 'deniz4.mp4'];
+        const emojis = ['🎸', '⚡', '🔥', '🤘', '🎸', '✨'];
         let isMusicPlaying = false;
+
+        // Arka plana uçuşan emojiler ekle
+        function createEmojis() {
+            for(let i=0; i<15; i++) {
+                const span = document.createElement('span');
+                span.className = 'emoji-float';
+                span.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                span.style.left = Math.random() * 100 + 'vw';
+                span.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                span.style.animationDelay = (Math.random() * 5) + 's';
+                bgAnimate.appendChild(span);
+            }
+        }
+        createEmojis();
 
         function toggleMetallica(event) {
             event.stopPropagation();
             if (isMusicPlaying) {
                 bgMusic.pause();
-                metaBtnText.innerText = "METALLICA BAŞLAT";
+                metaBtnText.innerText = "METALLICA OFF";
+                metaBtnText.parentElement.parentElement.style.borderColor = "#555";
             } else {
                 bgMusic.play();
-                metaBtnText.innerText = "METALLICA DURDUR";
+                metaBtnText.innerText = "METALLICA ON";
+                metaBtnText.parentElement.parentElement.style.borderColor = "#ff0055";
             }
             isMusicPlaying = !isMusicPlaying;
         }
@@ -120,7 +205,7 @@
             const randomIdx = Math.floor(Math.random() * videos.length);
             videoPlayer.src = videos[randomIdx]; 
             overlay.style.display = 'flex';
-            videoPlayer.play().catch(e => console.log("Video hatasi:", e));
+            videoPlayer.play().catch(e => console.log("Hata"));
         }
 
         function handleScreenClick(event) {
@@ -132,11 +217,7 @@
             if(event) event.stopPropagation();
             overlay.style.display = 'none';
             videoPlayer.pause();
-            videoPlayer.currentTime = 0;
-            
-            if (isMusicPlaying) {
-                bgMusic.play();
-            }
+            if (isMusicPlaying) bgMusic.play();
         }
     </script>
 </body>
