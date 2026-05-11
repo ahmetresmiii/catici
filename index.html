@@ -1,0 +1,129 @@
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deniz Gitar Superstar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        .rock-font {
+            font-family: 'Permanent Marker', cursive;
+        }
+        .title-font {
+            font-family: 'Bangers', system-ui;
+            letter-spacing: 2px;
+            text-shadow: 4px 4px 0px #ff0055;
+        }
+        .video-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .glow {
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.6);
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4" onclick="playRandomVideo()">
+
+    <!-- Header Section -->
+    <header class="text-center mt-10">
+        <h1 class="text-5xl md:text-7xl title-font mb-4 floating">DENİZ GİTAR ÇALIYOR!</h1>
+        <p class="text-xl md:text-2xl rock-font text-yellow-400">Şu yakışıklılığa bir baksanıza...</p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col items-center justify-center text-center space-y-8">
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-pink-600 to-yellow-500 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div class="relative px-8 py-8 bg-black rounded-full leading-none flex items-center">
+                <span class="text-6xl md:text-8xl">🎸</span>
+            </div>
+        </div>
+        
+        <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 max-w-sm glow">
+            <p class="text-lg italic">"Sahne ışıkları henüz onun için hazır değil ama o sahne için çoktan hazır!"</p>
+            <div class="mt-4 animate-bounce text-pink-500 font-bold">
+                Ekrana Dokun ve Konseri Başlat! 🤘
+            </div>
+        </div>
+    </main>
+
+    <!-- Video Modal Container -->
+    <div id="videoOverlay" class="video-overlay" onclick="closeVideo(event)">
+        <div class="relative w-full max-w-2xl px-4">
+            <button class="absolute -top-12 right-4 text-white text-4xl" onclick="closeVideo(event)">&times;</button>
+            <video id="denizVideo" class="w-full rounded-lg shadow-2xl border-2 border-pink-500" controls>
+                Tarayıcınız video etiketini desteklemiyor.
+            </video>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full text-center py-6 border-t border-white/10 mt-10">
+        <p class="rock-font text-sm md:text-base opacity-80">
+            yapimci canim oglusum deniz
+        </p>
+    </footer>
+
+    <script>
+        const videoPlayer = document.getElementById('denizVideo');
+        const overlay = document.getElementById('videoOverlay');
+        
+        // Videoların listesi
+        const videos = [
+            'deniz1.mp4',
+            'deniz2.mp4',
+            'deniz3.mp4'
+        ];
+
+        function playRandomVideo() {
+            // Eğer video zaten açıksa tekrar tetikleme
+            if (overlay.style.display === 'flex') return;
+
+            const randomIdx = Math.floor(Math.random() * videos.length);
+            const selectedVideo = videos[randomIdx];
+
+            // Video kaynağını belirle (GitHub repo yapısına göre ayarlanmalı)
+            // Örnek: 'https://raw.githubusercontent.com/kullanici/repo/main/' + selectedVideo
+            videoPlayer.src = selectedVideo; 
+            
+            overlay.style.display = 'flex';
+            videoPlayer.play().catch(error => {
+                console.log("Otomatik oynatma engellendi, kullanıcı etkileşimi gerekiyor.");
+            });
+        }
+
+        function closeVideo(event) {
+            event.stopPropagation(); // Sayfa tıklama olayını durdur
+            overlay.style.display = 'none';
+            videoPlayer.pause();
+            videoPlayer.currentTime = 0;
+        }
+    </script>
+</body>
+</html>
+
+```
