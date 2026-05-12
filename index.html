@@ -3,221 +3,282 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deniz Gitar Superstar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deniz Arcade - Mega Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff0055;
-            --secondary: #ffac00;
+            --neon-pink: #ff0055;
+            --neon-blue: #00f2ff;
         }
         body {
-            background: #050505;
+            background-color: #000;
             color: white;
-            overflow-x: hidden;
-            touch-action: manipulation;
             font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
         }
         .rock-font { font-family: 'Permanent Marker', cursive; }
-        .title-font {
-            font-family: 'Bangers', system-ui;
-            text-shadow: 0 0 20px var(--primary);
-        }
-        
-        /* Arka plan animasyonları */
-        .bg-animate {
+        .title-font { font-family: 'Bangers', cursive; }
+
+        .animated-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050505 100%);
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .emoji-float {
-            position: absolute;
-            pointer-events: none;
-            animation: float-up 10s linear infinite;
-            opacity: 0.2;
-            font-size: 2rem;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .glass-card:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        @keyframes float-up {
-            0% { transform: translateY(110vh) rotate(0deg); }
-            100% { transform: translateY(-10vh) rotate(360deg); }
+        .cayci-hero {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,0,85,0.9), rgba(188,19,254,0.9));
+            border: 3px solid #fff;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(255, 0, 85, 0.5);
         }
 
-        /* Sahne Işıkları */
-        .spotlight {
+        #gameCanvas {
+            display: none;
             position: fixed;
-            width: 40vw; height: 100vh;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            z-index: -1;
-            filter: blur(30px);
-            animation: swing 5s ease-in-out infinite alternate;
-            transform-origin: top center;
+            top: 0; left: 0; z-index: 100;
         }
-        @keyframes swing {
-            from { transform: rotate(-20deg); }
-            to { transform: rotate(20deg); }
-        }
-
-        /* Butonlar */
-        .btn-metal {
-            background: linear-gradient(45deg, #111, #333);
-            border: 2px solid #555;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 0 10px rgba(255,255,255,0.1);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .btn-metal:hover {
-            transform: scale(1.05);
-            border-color: var(--primary);
-            box-shadow: 0 0 20px var(--primary);
-        }
-        .btn-metal:active { transform: scale(0.95); }
 
         .video-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.98);
-            z-index: 100;
+            background: #000;
+            z-index: 2000;
             justify-content: center; align-items: center;
-            backdrop-filter: blur(10px);
-        }
-
-        /* Neon Yazı */
-        .neon-text {
-            color: #fff;
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--primary), 0 0 30px var(--primary);
         }
     </style>
 </head>
-<body onclick="handleScreenClick(event)">
+<body>
 
-    <div class="bg-animate" id="bgAnimate"></div>
-    <div class="spotlight" style="left: 10%;"></div>
-    <div class="spotlight" style="right: 10%; animation-delay: -2.5s;"></div>
+    <div class="animated-bg"></div>
+    <audio id="bgMusic" loop><source src="metallica.mp3" type="audio/mpeg"></audio>
 
-    <div class="min-h-screen flex flex-col items-center justify-between p-6 relative">
-        
-        <audio id="bgMusic" loop>
-            <source src="metallica.mp3" type="audio/mpeg">
-        </audio>
-
-        <header class="text-center mt-8 select-none z-10">
-            <h1 class="text-6xl md:text-9xl title-font mb-2 neon-text">DENİZ</h1>
-            <p class="text-2xl md:text-4xl rock-font text-yellow-400 -rotate-2">WORLD TOUR 2024</p>
+    <div id="mainUI" class="min-h-screen flex flex-col p-6 max-w-7xl mx-auto">
+        <header class="flex justify-between items-center py-8">
+            <div class="text-3xl title-font tracking-widest neon-text">DENIZ<span class="text-pink-500">ARCADE</span></div>
+            <div class="rock-font text-yellow-400 animate-pulse">ROCK STAR MODE ACTIVE</div>
         </header>
 
-        <main class="flex flex-col items-center gap-12 w-full max-w-md z-10">
-            <!-- Ana Buton Konteyneri -->
-            <div class="w-full flex flex-col gap-6">
-                <button onclick="toggleMetallica(event)" class="btn-metal w-full p-8 rounded-2xl flex items-center justify-center gap-4 group">
-                    <div class="text-4xl">🤘</div>
-                    <div class="text-left">
-                        <div class="text-xs text-gray-400 font-sans">BACKSTAGE MUSIC</div>
-                        <div class="text-xl title-font tracking-widest" id="metaBtnText">METALLICA OFF</div>
+        <!-- ÇAYCI - TOP GAME -->
+        <section class="mb-12">
+            <div onclick="startGame('cayci')" class="cayci-hero rounded-[2rem] p-10 cursor-pointer group relative">
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between">
+                    <div class="md:w-2/3 space-y-6 text-center md:text-left">
+                        <h2 class="text-7xl md:text-9xl title-font text-white drop-shadow-lg">ÇAYCI</h2>
+                        <p class="rock-font text-white text-2xl md:text-3xl">Süt Şişesiyle Kuş Operasyonu!</p>
+                        <button class="bg-white text-black px-10 py-4 rounded-full font-black title-font text-2xl hover:scale-110 transition-transform">OYNA 🍼</button>
                     </div>
-                </button>
-
-                <button onclick="playRandomVideo(event)" class="btn-metal w-full p-8 rounded-2xl flex items-center justify-center gap-4 group border-pink-500/50">
-                    <div class="text-4xl animate-bounce">🎸</div>
-                    <div class="text-left">
-                        <div class="text-xs text-pink-500 font-sans">LIVE PERFORMANCE</div>
-                        <div class="text-xl title-font tracking-widest">SOLO PATLAT!</div>
-                    </div>
-                </button>
-            </div>
-
-            <div class="text-center group cursor-pointer">
-                <div class="text-sm opacity-50 font-sans tracking-[0.2em] group-hover:opacity-100 transition-opacity">
-                    TAP ANYWHERE FOR SURPRISE
+                    <div class="text-[10rem] md:text-[15rem] group-hover:rotate-12 transition-transform">🍼</div>
                 </div>
             </div>
-        </main>
+        </section>
 
-        <footer class="w-full text-center py-8 z-10">
-            <div class="rock-font text-xl md:text-2xl text-white/80 border-t border-white/10 pt-4">
-                yapimci canim oglusum deniz
-            </div>
-        </footer>
+        <!-- 30 OYUNLUK GRID -->
+        <h3 class="title-font text-4xl mb-6 text-pink-500">TÜM OYUNLAR</h3>
+        <div id="gameGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pb-24"></div>
     </div>
 
-    <!-- Video Modal -->
-    <div id="videoOverlay" class="video-overlay" onclick="closeVideo(event)">
-        <div class="relative w-full max-w-4xl px-4" onclick="event.stopPropagation()">
-            <div class="absolute -top-16 left-0 right-0 flex justify-between items-center px-4">
-                <span class="rock-font text-2xl text-pink-500">DENİZ ON STAGE</span>
-                <button class="text-white text-6xl leading-none hover:text-pink-500" onclick="closeVideo(event)">&times;</button>
-            </div>
-            <div class="rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(255,0,85,0.5)] border-4 border-white/20">
-                <video id="denizVideo" class="w-full bg-black aspect-video" controls>
-                    Tarayiciniz video desteklemiyor.
-                </video>
-            </div>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="videoOverlay" class="video-overlay" onclick="closeVideo()">
+        <div class="relative w-full max-w-4xl p-4 text-center">
+            <h2 class="rock-font text-5xl text-yellow-400 mb-6" id="failMsg">KUŞLAR AÇ KALDI!</h2>
+            <video id="denizVideo" class="w-full rounded-3xl border-4 border-pink-600" controls></video>
+            <button class="mt-8 px-12 py-4 bg-white text-black font-black rounded-full" onclick="closeVideo()">TEKRAR DENE</button>
         </div>
     </div>
 
     <script>
-        const videoPlayer = document.getElementById('denizVideo');
-        const overlay = document.getElementById('videoOverlay');
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
         const bgMusic = document.getElementById('bgMusic');
-        const metaBtnText = document.getElementById('metaBtnText');
-        const bgAnimate = document.getElementById('bgAnimate');
-        
+        const videoOverlay = document.getElementById('videoOverlay');
+        const videoPlayer = document.getElementById('denizVideo');
         const videos = ['deniz1.mp4', 'deniz2.mp4', 'deniz3.mp4', 'deniz4.mp4'];
-        const emojis = ['🎸', '⚡', '🔥', '🤘', '🎸', '✨'];
-        let isMusicPlaying = false;
 
-        // Arka plana uçuşan emojiler ekle
-        function createEmojis() {
-            for(let i=0; i<15; i++) {
-                const span = document.createElement('span');
-                span.className = 'emoji-float';
-                span.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-                span.style.left = Math.random() * 100 + 'vw';
-                span.style.animationDuration = (Math.random() * 5 + 5) + 's';
-                span.style.animationDelay = (Math.random() * 5) + 's';
-                bgAnimate.appendChild(span);
-            }
+        let gameActive = false;
+        let activeMode = '';
+        let score = 0;
+        let playerX = window.innerWidth / 2;
+        let entities = [];
+        let projectiles = [];
+        let isAction = false;
+        let frame = 0;
+
+        const allGames = [
+            { id: 'cayci', name: 'Çaycı', icon: '🍼', speed: 4, type: 'shoot' },
+            { id: 'pena', name: 'Pena Avı', icon: '🔻', speed: 5, type: 'collect' },
+            { id: 'solo', name: 'Solo Master', icon: '🎸', speed: 6, type: 'collect' },
+            { id: 'nota', name: 'Nota Bomb', icon: '🎵', speed: 7, type: 'avoid' },
+            { id: 'fire', name: 'Alevli Sahne', icon: '🔥', speed: 8, type: 'avoid' },
+            { id: 'drum', name: 'Bateri Ritmi', icon: '🥁', speed: 5, type: 'collect' },
+            { id: 'jump', name: 'Stage Jump', icon: '⚡', speed: 6, type: 'avoid' },
+            { id: 'mic', name: 'Vocal Hit', icon: '🎤', speed: 5, type: 'collect' },
+            { id: 'metal', name: 'Pure Metal', icon: '🤟', speed: 9, type: 'avoid' },
+            { id: 'star', name: 'Star Dust', icon: '✨', speed: 4, type: 'collect' },
+            { id: 'disk', name: 'Plak Yakala', icon: '💿', speed: 7, type: 'collect' },
+            { id: 'bass', name: 'Deep Bass', icon: '🔊', speed: 6, type: 'avoid' },
+            { id: 'road', name: 'Tour Road', icon: '🛣️', speed: 8, type: 'avoid' },
+            { id: 'gold', name: 'Altın Record', icon: '🏆', speed: 10, type: 'collect' },
+            { id: 'fan', name: 'Fan Love', icon: '👥', speed: 5, type: 'collect' },
+            { id: 'jacket', name: 'Leather Run', icon: '🧥', speed: 7, type: 'avoid' },
+            { id: 'glass', name: 'Dark Sun', icon: '🕶️', speed: 6, type: 'avoid' },
+            { id: 'lightning', name: 'Bolt Speed', icon: '⚡', speed: 12, type: 'avoid' },
+            { id: 'box', name: 'Gear Box', icon: '💼', speed: 5, type: 'collect' },
+            { id: 'tape', name: 'Old Tape', icon: '📼', speed: 6, type: 'collect' },
+            { id: 'spot', name: 'Spotlight', icon: '🔦', speed: 7, type: 'avoid' },
+            { id: 'skull', name: 'Rock Skull', icon: '💀', speed: 9, type: 'avoid' },
+            { id: 'beer', name: 'Soda Pop', icon: '🥤', speed: 5, type: 'collect' },
+            { id: 'pizza', name: 'Tour Food', icon: '🍕', speed: 5, type: 'collect' },
+            { id: 'key', name: 'Bus Key', icon: '🔑', speed: 8, type: 'collect' },
+            { id: 'phone', name: 'Live Stream', icon: '📱', speed: 6, type: 'avoid' },
+            { id: 'ticket', name: 'VIP Pass', icon: '🎫', speed: 7, type: 'collect' },
+            { id: 'crown', name: 'King Deniz', icon: '👑', speed: 11, type: 'avoid' },
+            { id: 'neon', name: 'Neon City', icon: '🌃', speed: 8, type: 'avoid' },
+            { id: 'final', name: 'Grand Solo', icon: '🔥', speed: 13, type: 'avoid' }
+        ];
+
+        const grid = document.getElementById('gameGrid');
+        allGames.forEach(g => {
+            if(g.id === 'cayci') return;
+            const card = document.createElement('div');
+            card.className = "glass-card p-6 rounded-2xl text-center";
+            card.innerHTML = `<div class="text-4xl mb-2">${g.icon}</div><div class="text-[10px] font-bold">${g.name}</div>`;
+            card.onclick = () => startGame(g.id);
+            grid.appendChild(card);
+        });
+
+        function startGame(mode) {
+            activeMode = allGames.find(g => g.id === mode);
+            gameActive = true;
+            document.getElementById('mainUI').style.display = 'none';
+            canvas.style.display = 'block';
+            resize();
+            score = 0; entities = []; projectiles = [];
+            bgMusic.currentTime = 0;
+            bgMusic.play();
+            loop();
         }
-        createEmojis();
 
-        function toggleMetallica(event) {
-            event.stopPropagation();
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                metaBtnText.innerText = "METALLICA OFF";
-                metaBtnText.parentElement.parentElement.style.borderColor = "#555";
-            } else {
-                bgMusic.play();
-                metaBtnText.innerText = "METALLICA ON";
-                metaBtnText.parentElement.parentElement.style.borderColor = "#ff0055";
-            }
-            isMusicPlaying = !isMusicPlaying;
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
 
-        function playRandomVideo(event) {
-            if(event) event.stopPropagation();
+        const handleInput = (e) => {
+            playerX = e.touches ? e.touches[0].clientX : e.clientX;
+            if(e.type === 'mousedown' || e.type === 'touchstart') isAction = true;
+            if(e.type === 'mouseup' || e.type === 'touchend') isAction = false;
+        };
+        window.addEventListener('mousemove', handleInput);
+        window.addEventListener('mousedown', handleInput);
+        window.addEventListener('mouseup', handleInput);
+        window.addEventListener('touchstart', handleInput);
+        window.addEventListener('touchend', handleInput);
+
+        function loop() {
+            if(!gameActive) return;
+            ctx.fillStyle = '#000814';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Çaycı için özel çatı
+            if(activeMode.id === 'cayci') {
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+                if(isAction && frame % 4 === 0) projectiles.push({x: playerX, y: canvas.height-120});
+            }
+
+            // Mermiler (Süt)
+            ctx.fillStyle = 'white';
+            projectiles.forEach((p, i) => {
+                p.y -= 15;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2); ctx.fill();
+                if(p.y < 0) projectiles.splice(i, 1);
+            });
+
+            // Nesneler (Kuşlar veya Notalar)
+            if(frame % 40 === 0) {
+                entities.push({x: Math.random()*canvas.width, y: -50, icon: activeMode.id === 'cayci' ? '🐦' : activeMode.icon});
+            }
+
+            entities.forEach((e, i) => {
+                e.y += activeMode.speed;
+                ctx.font = "40px Arial";
+                ctx.fillText(e.icon, e.x - 20, e.y);
+
+                // Çarpışma Mekanikleri
+                if(activeMode.type === 'shoot') {
+                    projectiles.forEach((p, pi) => {
+                        if(Math.abs(p.x - e.x) < 40 && Math.abs(p.y - e.y) < 40) {
+                            entities.splice(i, 1); projectiles.splice(pi, 1); score++;
+                        }
+                    });
+                    if(e.y > canvas.height - 80) triggerFail("KUŞLAR ÇATIYI İSTİLA ETTİ!");
+                } else {
+                    const dist = Math.sqrt((e.x - playerX)**2 + (e.y - (canvas.height-100))**2);
+                    if(dist < 50) {
+                        if(activeMode.type === 'collect') { entities.splice(i,1); score++; }
+                        else triggerFail("ROCK STAR DARBE ALDI!");
+                    }
+                    if(e.y > canvas.height) {
+                        if(activeMode.type === 'collect') triggerFail("EŞYAYI KAÇIRDIN!");
+                        else entities.splice(i, 1);
+                    }
+                }
+            });
+
+            // Oyuncu
+            ctx.font = "60px Arial";
+            ctx.fillText(activeMode.id === 'cayci' ? '🍼' : '🎸', playerX - 30, canvas.height - 100);
+
+            // Skor
+            ctx.fillStyle = "#fff";
+            ctx.font = "20px Orbitron";
+            ctx.fillText(`${activeMode.name} Skor: ${score}`, 20, 40);
+
+            frame++;
+            requestAnimationFrame(loop);
+        }
+
+        function triggerFail(msg) {
+            gameActive = false;
             bgMusic.pause();
-
-            const randomIdx = Math.floor(Math.random() * videos.length);
-            videoPlayer.src = videos[randomIdx]; 
-            overlay.style.display = 'flex';
-            videoPlayer.play().catch(e => console.log("Hata"));
+            document.getElementById('failMsg').innerText = msg;
+            videoPlayer.src = videos[Math.floor(Math.random()*videos.length)];
+            videoOverlay.style.display = 'flex';
+            videoPlayer.play();
         }
 
-        function handleScreenClick(event) {
-            if (overlay.style.display === 'flex') return;
-            playRandomVideo();
-        }
-
-        function closeVideo(event) {
-            if(event) event.stopPropagation();
-            overlay.style.display = 'none';
+        function closeVideo() {
+            videoOverlay.style.display = 'none';
             videoPlayer.pause();
-            if (isMusicPlaying) bgMusic.play();
+            document.getElementById('mainUI').style.display = 'block';
+            canvas.style.display = 'none';
         }
     </script>
 </body>
