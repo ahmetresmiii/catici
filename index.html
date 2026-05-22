@@ -103,6 +103,19 @@
         <div id="gameGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pb-24"></div>
     </div>
 
+
+    <!-- Admin Panel Button (Hidden Lock) -->
+    <div onclick="showAdminLogin()" style="position: absolute; top: 10px; right: 10px; cursor: pointer; opacity: 0.2; font-size: 20px;">🔒</div>
+
+    <!-- Admin Panel Overlay -->
+    <div id="adminPanel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); border: 2px solid #ff0055; padding: 20px; border-radius: 10px; z-index: 1000; text-align: center;">
+        <h3 class="title-font text-2xl text-pink-500 mb-4">ADMIN PANEL</h3>
+        <button onclick="toggleGodMode()" id="godModeBtn" style="background: white; color: black; padding: 10px; margin: 5px; border-radius: 5px; font-weight: bold;">God Mode: OFF</button>
+        <button onclick="addScore(1000)" style="background: white; color: black; padding: 10px; margin: 5px; border-radius: 5px; font-weight: bold;">+1000 Puan</button>
+        <button onclick="clearScreen()" style="background: white; color: black; padding: 10px; margin: 5px; border-radius: 5px; font-weight: bold;">Ekranı Temizle</button>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" style="background: red; color: white; padding: 10px; margin: 5px; border-radius: 5px; font-weight: bold;">Kapat</button>
+    </div>
+
     <canvas id="gameCanvas"></canvas>
 
     <div id="videoOverlay" class="video-overlay" onclick="closeVideo()">
@@ -120,6 +133,32 @@
         const videoOverlay = document.getElementById('videoOverlay');
         const videoPlayer = document.getElementById('denizVideo');
         const videos = ['deniz1.mp4', 'deniz2.mp4', 'deniz3.mp4', 'deniz4.mp4'];
+
+
+        let godMode = false;
+
+        function showAdminLogin() {
+            const pwd = prompt("Admin Password:");
+            if(pwd === "admin") {
+                document.getElementById('adminPanel').style.display = 'block';
+            } else if(pwd !== null) {
+                alert("Yanlış Şifre!");
+            }
+        }
+
+        function toggleGodMode() {
+            godMode = !godMode;
+            document.getElementById('godModeBtn').innerText = `God Mode: ${godMode ? 'ON' : 'OFF'}`;
+            document.getElementById('godModeBtn').style.background = godMode ? '#00f2ff' : 'white';
+        }
+
+        function addScore(amount) {
+            score += amount;
+        }
+
+        function clearScreen() {
+            entities = [];
+        }
 
         let gameActive = false;
         let activeMode = '';
@@ -265,7 +304,9 @@
             requestAnimationFrame(loop);
         }
 
+
         function triggerFail(msg) {
+            if(godMode) return;
             gameActive = false;
             bgMusic.pause();
             document.getElementById('failMsg').innerText = msg;
